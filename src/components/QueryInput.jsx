@@ -19,12 +19,23 @@ const QueryInput = ({
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
 
-  const handleSpeechInput = () => {
+  const handleSpeechInput = async () => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
       alert("Speech Recognition is not supported in this browser.");
+      return;
+    }
+
+    // Check microphone permissions
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (error) {
+      console.error("Microphone permission error:", error);
+      alert(
+        "Microphone access is required for speech-to-text. Please check your browser settings and permissions."
+      );
       return;
     }
 
