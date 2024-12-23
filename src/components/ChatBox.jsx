@@ -13,14 +13,13 @@ function ChatBox() {
   const [showCopied, setShowCopied] = useState(false);
   const [selectedModel, setSelectedModel] = useState("OpenAI-GPT-4.0");
   const [selectedChatMode, setSelectedChatMode] = useState("document");
-  const user_id = localStorage.getItem("user_id"); // Fetch user_id from localStorage
+  const user_id = localStorage.getItem("user_id");
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
   const [copiedMessageId, setCopiedMessageId] = useState(null);
   const [showScrollDown, setShowScrollDown] = useState(false);
 
-  // Update useEffect to fetch and save messages based on user_id
   useEffect(() => {
     const savedMessages = sessionStorage.getItem(`chatHistory_${user_id}`);
     if (savedMessages) {
@@ -34,7 +33,7 @@ function ChatBox() {
     }
 
     const clearSessionStorage = () => {
-      sessionStorage.clear(); // Clear session storage on tab close or reload
+      sessionStorage.clear();
     };
 
     window.addEventListener("beforeunload", clearSessionStorage);
@@ -114,115 +113,6 @@ function ChatBox() {
     }
   };
 
-  // const handleQuery = async () => {
-  //   if (!query) return;
-
-  //   if (selectedChatMode === "dataset" && !file) {
-  //     alert("No file uploaded. Please upload a file first.");
-  //     return;
-  //   }
-
-  //   try {
-  //     setLoading(true);
-  //     const formData = new FormData();
-  //     formData.append("user_id", user_id);
-  //     formData.append("model", selectedModel);
-
-  //     setQuery("");
-
-  //     if (selectedChatMode === "document" && query) {
-  //       formData.append("query", query);
-
-  //       setMessages((prevMessages) => [
-  //         ...prevMessages,
-  //         { type: "question", text: query, chatMode: "document" },
-  //       ]);
-
-  //       const response = await fetch(`${import.meta.env.VITE_API_URL}/query`, {
-  //         method: "POST",
-  //         body: formData,
-  //       });
-
-  //       if (!response.ok) {
-  //         throw new Error(`Error: ${response.statusText}`);
-  //       }
-
-  //       const responseData = await response.json();
-
-  //       if (responseData.response) {
-  //         const responseText = responseData.response;
-  //         let index = 0;
-
-  //         const responseMessage = { type: "response", text: "" };
-  //         setMessages((prevMessages) => [...prevMessages, responseMessage]);
-
-  //         const intervalId = setInterval(() => {
-  //           setMessages((prevMessages) => {
-  //             const updatedMessages = [...prevMessages];
-  //             updatedMessages[updatedMessages.length - 1] = {
-  //               ...updatedMessages[updatedMessages.length - 1],
-  //               text: responseText.slice(0, index),
-  //             };
-  //             return updatedMessages;
-  //           });
-  //           index++;
-
-  //           if (index > responseText.length) {
-  //             clearInterval(intervalId);
-  //           }
-  //         }, 5);
-  //       }
-  //     } else if (selectedChatMode === "dataset" && query && file) {
-  //       formData.append("query", query);
-  //       formData.append("file", file);
-
-  //       setMessages((prevMessages) => [
-  //         ...prevMessages,
-  //         {
-  //           type: "question",
-  //           text: query,
-  //           fileName: file.name,
-  //           chatMode: "dataset",
-  //         },
-  //       ]);
-
-  //       const response = await axios.post(
-  //         `${import.meta.env.VITE_API_URL}/dataset_query`,
-  //         formData,
-  //         { headers: { "Content-Type": "multipart/form-data" } }
-  //       );
-
-  //       const answer =
-  //         response.data.response || "No response provided by the server.";
-
-  //       let index = 0;
-  //       const responseMessage = { type: "answer", text: "" };
-  //       setMessages((prevMessages) => [...prevMessages, responseMessage]);
-
-  //       const intervalId = setInterval(() => {
-  //         setMessages((prevMessages) => {
-  //           const updatedMessages = [...prevMessages];
-  //           updatedMessages[updatedMessages.length - 1] = {
-  //             ...updatedMessages[updatedMessages.length - 1],
-  //             text: answer.slice(0, index).replace(/\*\*/g, ""),
-  //           };
-  //           return updatedMessages;
-  //         });
-  //         index++;
-
-  //         if (index > answer.length) {
-  //           clearInterval(intervalId);
-  //         }
-  //       }, 5);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error querying:", error);
-  //     alert("Error occurred while querying the dataset. Please try again.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleQuery = async () => {
     if (!query) return;
 
@@ -265,7 +155,6 @@ function ChatBox() {
           const responseMessage = { type: "response", text: "" };
           setMessages((prevMessages) => [...prevMessages, responseMessage]);
 
-          // Change the interval to 1ms for faster streaming
           const intervalId = setInterval(() => {
             setMessages((prevMessages) => {
               const updatedMessages = [...prevMessages];
@@ -275,12 +164,12 @@ function ChatBox() {
               };
               return updatedMessages;
             });
-            index += 5; // Increment by 5 or any larger step to speed up the text reveal
+            index += 5;
 
             if (index > responseText.length) {
               clearInterval(intervalId);
             }
-          }, 1); // Reduced to 1 ms for faster streaming
+          }, 1);
         }
       } else if (selectedChatMode === "dataset" && query && file) {
         formData.append("query", query);
@@ -309,7 +198,6 @@ function ChatBox() {
         const responseMessage = { type: "answer", text: "" };
         setMessages((prevMessages) => [...prevMessages, responseMessage]);
 
-        // Change the interval to 1ms for faster streaming
         const intervalId = setInterval(() => {
           setMessages((prevMessages) => {
             const updatedMessages = [...prevMessages];
@@ -319,12 +207,12 @@ function ChatBox() {
             };
             return updatedMessages;
           });
-          index += 5; // Increment by 5 or any larger step to speed up the text reveal
+          index += 5;
 
           if (index > answer.length) {
             clearInterval(intervalId);
           }
-        }, 1); // Reduced to 1 ms for faster streaming
+        }, 1);
       }
     } catch (error) {
       console.error("Error querying:", error);

@@ -28,10 +28,11 @@ const QueryInput = ({
       return;
     }
 
+    // Initialize SpeechRecognition if not already done
     if (!recognitionRef.current) {
       recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true; // Allow continuous speech recognition
-      recognitionRef.current.interimResults = true; // Allow interim results (partial transcription)
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
       recognitionRef.current.lang = "en-US";
 
       recognitionRef.current.onstart = () => {
@@ -40,47 +41,42 @@ const QueryInput = ({
 
       recognitionRef.current.onresult = (event) => {
         let transcript = "";
-        // Iterate over each result and get the transcript
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const result = event.results[i];
           transcript += result[0].transcript;
         }
 
-        // Log the transcript and whether it's final or interim
-        console.log("Transcript:", transcript);
-        console.log("Is Final:", event.results[event.resultIndex].isFinal);
-
-        // Update the query with the new speech-to-text result
-        setQuery((prevQuery) => `${prevQuery}${transcript}`);
+        // Update query with the new transcript
+        setQuery((prevQuery) => `${prevQuery} ${transcript}`.trim());
       };
 
       recognitionRef.current.onend = () => {
-        setIsListening(false);
         console.log("Speech recognition ended...");
+        setIsListening(false);
       };
 
       recognitionRef.current.onerror = (event) => {
         console.error("Speech recognition error:", event.error);
+        setIsListening(false);
+
         if (event.error === "no-speech") {
-          console.log("No speech detected. Try speaking again.");
+          alert("No speech detected. Please try speaking again.");
         } else if (event.error === "audio-capture") {
-          console.log("Audio capture error. Please check your microphone.");
+          alert("Microphone not found or not accessible.");
         } else if (event.error === "not-allowed") {
-          console.log(
-            "Microphone access is not allowed. Please check your permissions."
-          );
+          alert("Microphone access denied. Please check browser permissions.");
         } else {
-          console.log("Unknown error:", event.error);
+          alert("An unknown error occurred. Please try again.");
         }
       };
     }
 
-    // Toggle listening state based on current state
+    // Toggle listening state
     if (isListening) {
-      recognitionRef.current.stop(); // Stop listening if already active
+      recognitionRef.current.stop();
       setIsListening(false);
     } else {
-      recognitionRef.current.start(); // Start listening when triggered
+      recognitionRef.current.start();
       setIsListening(true);
     }
   };
@@ -97,9 +93,7 @@ const QueryInput = ({
 
       <textarea
         value={query}
-        onChange={(e) => {
-          setQuery(e.target.value);
-        }}
+        onChange={(e) => setQuery(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -122,6 +116,18 @@ const QueryInput = ({
           e.target.style.height = `${e.target.scrollHeight}px`;
         }}
       />
+
+      <button
+        onClick={handleSpeechInput}
+        className="p-4 text-white hover:text-gray-400"
+        title={isListening ? "Stop Listening" : "Start Listening"}
+      >
+        {isListening ? (
+          <FaMicrophoneSlash className="w-6 h-6 text-red-500" />
+        ) : (
+          <FaMicrophone className="w-6 h-6" />
+        )}
+      </button>
 
       <button
         onClick={handleQuery}
