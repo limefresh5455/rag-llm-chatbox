@@ -84,6 +84,13 @@ const QueryInput = ({
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleQuery();
+    }
+  };
+
   return (
     <div className="relative flex w-full items-center bg-[#2f2f2f] rounded-2xl text-white focus-within:ring-2 focus-within:ring-[#212121]">
       {showFileUpload && (
@@ -112,6 +119,7 @@ const QueryInput = ({
           e.target.style.height = "auto";
           e.target.style.height = `${e.target.scrollHeight}px`;
         }}
+        onKeyDown={handleKeyDown} // Add this handler for Enter key press
       />
 
       <button
