@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
 import { IoChatbox, IoLogOut } from "react-icons/io5";
-import { FaUserFriends, FaUsers, FaUser } from "react-icons/fa";
+import { FaUserFriends, FaUsers, FaUser, FaSyncAlt } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import Logo from "../assets/revology_analytics_logo_white-01.png";
 
@@ -14,11 +14,13 @@ const Sidebar = () => {
   });
   const [userData, setUserData] = useState({});
   const navigate = useNavigate();
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("user_id");
     navigate("/login");
   };
+
   const toggleMenu = (menu) => {
     setOpenMenu((prev) => ({ ...prev, [menu]: !prev[menu] }));
   };
@@ -27,14 +29,14 @@ const Sidebar = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = localStorage.getItem("user_id");
     if (user) {
-      setUserData({ email: user.email, id: userId });
+      setUserData({ email: user.email, id: userId, isAdmin: user.role });
     }
   }, []);
+
   return (
     <div className="h-screen w-64 bg-[#171717] text-white flex flex-col">
       <div className="p-4 text-lg border-b text-[#b4b4b4] border-[#212121] flex items-center">
         <img src={Logo} alt="Logo" className="h-10 w-10 mr-4" />
-
         <div>
           Admin Panel
           <div className="text-sm text-[#b4b4b4] border-b border-[#212121]">
@@ -123,6 +125,22 @@ const Sidebar = () => {
               <RiLockPasswordFill style={{ marginRight: "5px" }} />
               Change Password
             </NavLink>
+          </li>
+
+          <li>
+            {userData.isAdmin && (
+              <NavLink
+                to="/trigger"
+                className={({ isActive }) =>
+                  `flex items-center px-2 py-1 rounded ${
+                    isActive ? "bg-[#212121]" : ""
+                  }`
+                }
+              >
+                <FaSyncAlt style={{ marginRight: "5px" }} />
+                Synced documents
+              </NavLink>
+            )}
           </li>
         </ul>
       </nav>

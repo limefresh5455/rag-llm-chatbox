@@ -28,7 +28,6 @@ const QueryInput = ({
       return;
     }
 
-    // Check microphone permissions
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch (error) {
@@ -39,25 +38,17 @@ const QueryInput = ({
       return;
     }
 
-    // Initialize SpeechRecognition if not already done
     if (!recognitionRef.current) {
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
+      recognitionRef.current.interimResults = false;
       recognitionRef.current.lang = "en-US";
 
-      recognitionRef.current.onstart = () => {
-        console.log("Speech recognition started...");
-      };
-
       recognitionRef.current.onresult = (event) => {
-        let transcript = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const result = event.results[i];
-          transcript += result[0].transcript;
-        }
+        const transcript = Array.from(event.results)
+          .map((result) => result[0].transcript)
+          .join("");
 
-        // Update query with the new transcript
         setQuery((prevQuery) => `${prevQuery} ${transcript}`.trim());
       };
 
@@ -70,19 +61,20 @@ const QueryInput = ({
         console.error("Speech recognition error:", event.error);
         setIsListening(false);
 
-        if (event.error === "no-speech") {
-          alert("No speech detected. Please try speaking again.");
-        } else if (event.error === "audio-capture") {
-          alert("Microphone not found or not accessible.");
-        } else if (event.error === "not-allowed") {
-          alert("Microphone access denied. Please check browser permissions.");
-        } else {
-          alert("An unknown error occurred. Please try again.");
-        }
+        const errorMessages = {
+          "no-speech": "No speech detected. Please try speaking again.",
+          "audio-capture": "Microphone not found or not accessible.",
+          "not-allowed":
+            "Microphone access denied. Please check browser permissions.",
+        };
+
+        alert(
+          errorMessages[event.error] ||
+            "An unknown error occurred. Please try again."
+        );
       };
     }
 
-    // Toggle listening state
     if (isListening) {
       recognitionRef.current.stop();
       setIsListening(false);
@@ -105,12 +97,6 @@ const QueryInput = ({
       <textarea
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleQuery();
-          }
-        }}
         placeholder="Ask a question"
         className="p-4 bg-transparent text-white placeholder-gray-500 focus:outline-none scrollBar flex-1 border-[#676767] scrollbar scrollbar-thumb-[#676767] scrollbar-track-transparent resize-none"
         style={{

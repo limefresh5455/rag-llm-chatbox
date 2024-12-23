@@ -9,6 +9,7 @@ import Dashboard from "./admin/Dashboard";
 import Member from "./admin/Member";
 import AddMember from "./admin/AddMember";
 import ChangePassword from "./admin/ChangePassword";
+import Trigger from "./admin/Trigger";
 import NotFound from "./NotFound";
 import { ToastContainer } from "react-toastify";
 
@@ -69,6 +70,17 @@ const App = () => {
               <PrivateRoute allowedRoles={["member", "admin"]}>
                 <LayoutWithSidebar>
                   <ChangePassword />
+                </LayoutWithSidebar>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/trigger"
+            element={
+              <PrivateRoute allowedRoles={["admin"]}>
+                <LayoutWithSidebar>
+                  <Trigger />
                 </LayoutWithSidebar>
               </PrivateRoute>
             }
