@@ -7,7 +7,7 @@ const Member = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState(null);
-
+  const user = JSON.parse(localStorage.getItem("user"));
   useEffect(() => {
     fetchMembers();
   }, []);
@@ -19,6 +19,7 @@ const Member = () => {
         `${import.meta.env.VITE_API_URL}/members`,
         {
           headers: {
+            Authorization: `Bearer ${user.token}`,
             "ngrok-skip-browser-warning": "true",
           },
         }
@@ -45,6 +46,7 @@ const Member = () => {
     try {
       await axios.delete(`${import.meta.env.VITE_API_URL}/delete_member`, {
         headers: {
+          Authorization: `Bearer ${user.token}`,
           "ngrok-skip-browser-warning": "true",
         },
         data: { email: selectedEmail },

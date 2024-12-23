@@ -5,7 +5,7 @@ const Dashboard = () => {
   const [totalMembers, setTotalMembers] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const user = JSON.parse(localStorage.getItem("user"));
   useEffect(() => {
     fetchMembers();
   }, []);
@@ -17,6 +17,7 @@ const Dashboard = () => {
         `${import.meta.env.VITE_API_URL}/members`,
         {
           headers: {
+            Authorization: `Bearer ${user.token}`,
             "ngrok-skip-browser-warning": "true",
           },
         }

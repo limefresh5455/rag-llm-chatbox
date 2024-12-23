@@ -5,17 +5,24 @@ const ModelSelector = ({
   setSelectedModel,
   selectedChatMode,
 }) => {
-  // Determine model options based on the selectedChatMode
   const modelOptions =
     selectedChatMode === "document"
       ? [
           "OpenAI-GPT-4.o-mini",
           "OpenAI-GPT-4.o",
+          "OpenAI-GPT-o1-mini",
           "OpenAI-GPT-4.o1-preview",
           "Claude-Sonnet-3.5",
           "Google-Gemini-1.5-Pro",
         ]
-      : ["OpenAI-GPT-4.o-mini", "OpenAI-GPT-4.o"];
+      : [
+          "OpenAI-GPT-4.o-mini",
+          "OpenAI-GPT-4.o",
+          "OpenAI-GPT-o1-mini",
+          "OpenAI-GPT-4.o1-preview",
+          "Claude-Sonnet-3.5",
+          "Google-Gemini-1.5-Pro",
+        ];
 
   return (
     <div className="mr-4 flex items-center space-x-4 justify-center">

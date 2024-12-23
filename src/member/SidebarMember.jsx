@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { IoChatbox, IoLogOut } from "react-icons/io5";
 import { RiLockPasswordFill } from "react-icons/ri";
+import Logo from "../assets/revology_analytics_logo_white-01.png";
 
 const SidebarMember = () => {
   const [userData, setUserData] = useState({});
@@ -23,16 +24,16 @@ const SidebarMember = () => {
 
   return (
     <div className="h-screen w-64 bg-[#171717] text-white flex flex-col">
-      <div className="p-4 text-lg border-b text-[#b4b4b4] border-[#212121]">
-        Member Panel
-        <div className="text-sm text-[#b4b4b4] border-b border-[#212121]">
-          <p>{userData.email || "Not available"}</p>
-          {/* <p>
-          <strong>ID:</strong> {userData.id || "Not available"}
-        </p> */}
+      <div className="p-4 text-lg border-b text-[#b4b4b4] border-[#212121] flex items-center">
+        <img src={Logo} alt="Logo" className="h-10 w-10 mr-4" />
+
+        <div>
+          Member Panel
+          <div className="text-sm text-[#b4b4b4] border-b border-[#212121]">
+            <p>{userData.email || "Not available"}</p>
+          </div>
         </div>
       </div>
-      {/* Display Email and ID */}
 
       <nav className="scrollBar flex-1 overflow-y-auto border-[#676767] scrollbar scrollbar-thumb-[#676767] scrollbar-track-transparent">
         <ul className="space-y-2 p-4">

@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import Message from "./Message";
 import PropTypes from "prop-types";
 
 const MessageList = ({
   messages,
+  copiedMessageId,
+  setCopiedMessageId,
   handleCopy,
-  showCopied,
   fileName,
   selectedChatMode,
 }) => {
@@ -13,10 +14,14 @@ const MessageList = ({
     <div className="mb-0 space-y-2">
       {messages.map((message, index) => (
         <Message
-          key={message.id || index}
-          message={message}
+          key={index}
+          message={{ ...message, id: message.id || index }}
+          onClick={() => setCopiedMessageId(message.id)}
+          className={copiedMessageId === message.id ? "highlight" : ""}
           handleCopy={handleCopy}
-          showCopied={showCopied}
+          copiedMessageId={String(copiedMessageId)}
+          setCopiedMessageId={setCopiedMessageId}
+          showCopied={copiedMessageId === message.id}
           isMarkdown={message.type === "response"}
           fileName={fileName}
           selectedChatMode={selectedChatMode}
@@ -36,7 +41,8 @@ MessageList.propTypes = {
     })
   ).isRequired,
   handleCopy: PropTypes.func.isRequired,
-  showCopied: PropTypes.bool.isRequired,
+  copiedMessageId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setCopiedMessageId: PropTypes.func.isRequired,
   fileName: PropTypes.string,
   selectedChatMode: PropTypes.string.isRequired,
 };

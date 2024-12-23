@@ -123,20 +123,6 @@ const QueryInput = ({
         }}
       />
 
-      {/* <button
-        onClick={handleSpeechInput}
-        className={`p-2 pr-0 text-white hover:text-gray-400 ${
-          isListening ? "text-green-500 animate-pulse" : ""
-        }`}
-        title={isListening ? "Stop Listening" : "Start Listening"}
-      >
-        {isListening ? (
-          <FaMicrophoneSlash className="w-6 h-6" />
-        ) : (
-          <FaMicrophone className="w-6 h-6" />
-        )}
-      </button> */}
-
       <button
         onClick={handleQuery}
         disabled={loading || (!query && !file)}

@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
 const AddMember = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -35,6 +36,11 @@ const AddMember = () => {
           confirm_password: formData.confirm_password,
           password: formData.password,
           role: formData.role,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
         }
       );
       toast.success(response.data.message);

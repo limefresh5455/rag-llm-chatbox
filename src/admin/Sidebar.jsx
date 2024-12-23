@@ -4,6 +4,7 @@ import { MdDashboard } from "react-icons/md";
 import { IoChatbox, IoLogOut } from "react-icons/io5";
 import { FaUserFriends, FaUsers, FaUser } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
+import Logo from "../assets/revology_analytics_logo_white-01.png";
 
 const Sidebar = () => {
   const [openMenu, setOpenMenu] = useState({
@@ -31,13 +32,14 @@ const Sidebar = () => {
   }, []);
   return (
     <div className="h-screen w-64 bg-[#171717] text-white flex flex-col">
-      <div className="p-4 text-lg border-b text-[#b4b4b4] border-[#212121]">
-        Admin Panel
-        <div className="text-sm text-[#b4b4b4] border-b border-[#212121]">
-          <p>{userData.email || "Not available"}</p>
-          {/* <p>
-          <strong>ID:</strong> {userData.id || "Not available"}
-        </p> */}
+      <div className="p-4 text-lg border-b text-[#b4b4b4] border-[#212121] flex items-center">
+        <img src={Logo} alt="Logo" className="h-10 w-10 mr-4" />
+
+        <div>
+          Admin Panel
+          <div className="text-sm text-[#b4b4b4] border-b border-[#212121]">
+            <p>{userData.email || "Not available"}</p>
+          </div>
         </div>
       </div>
 

@@ -13,15 +13,16 @@ function ChatBox() {
   const [showCopied, setShowCopied] = useState(false);
   const [selectedModel, setSelectedModel] = useState("OpenAI-GPT-4.0");
   const [selectedChatMode, setSelectedChatMode] = useState("document");
-  const user_id = localStorage.getItem("user_id");
+  const user_id = localStorage.getItem("user_id"); // Fetch user_id from localStorage
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
-
+  const [copiedMessageId, setCopiedMessageId] = useState(null);
   const [showScrollDown, setShowScrollDown] = useState(false);
 
+  // Update useEffect to fetch and save messages based on user_id
   useEffect(() => {
-    const savedMessages = sessionStorage.getItem("chatHistory");
+    const savedMessages = sessionStorage.getItem(`chatHistory_${user_id}`);
     if (savedMessages) {
       setMessages(JSON.parse(savedMessages));
     }
@@ -33,7 +34,7 @@ function ChatBox() {
     }
 
     const clearSessionStorage = () => {
-      sessionStorage.clear();
+      sessionStorage.clear(); // Clear session storage on tab close or reload
     };
 
     window.addEventListener("beforeunload", clearSessionStorage);
@@ -41,13 +42,16 @@ function ChatBox() {
     return () => {
       window.removeEventListener("beforeunload", clearSessionStorage);
     };
-  }, [selectedChatMode]);
+  }, [selectedChatMode, user_id]);
 
   useEffect(() => {
     if (messages.length > 0) {
-      sessionStorage.setItem("chatHistory", JSON.stringify(messages));
+      sessionStorage.setItem(
+        `chatHistory_${user_id}`,
+        JSON.stringify(messages)
+      );
     }
-  }, [messages]);
+  }, [messages, user_id]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -76,7 +80,8 @@ function ChatBox() {
 
   const handleFileChange = async (event) => {
     const selectedFile = event.target.files[0];
-    setFile(selectedFile);
+    setFile(null);
+    console.log("Uploaded file:", selectedFile);
 
     if (selectedFile) {
       try {
@@ -93,10 +98,10 @@ function ChatBox() {
 
         const successMessage =
           response.data.message || "File uploaded successfully!";
+        alert(successMessage);
 
-        alert(`${successMessage}`);
+        setFile(selectedFile);
 
-        setFile(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
       } catch (error) {
         console.error("Error uploading file:", error);
@@ -109,8 +114,122 @@ function ChatBox() {
     }
   };
 
+  // const handleQuery = async () => {
+  //   if (!query) return;
+
+  //   if (selectedChatMode === "dataset" && !file) {
+  //     alert("No file uploaded. Please upload a file first.");
+  //     return;
+  //   }
+
+  //   try {
+  //     setLoading(true);
+  //     const formData = new FormData();
+  //     formData.append("user_id", user_id);
+  //     formData.append("model", selectedModel);
+
+  //     setQuery("");
+
+  //     if (selectedChatMode === "document" && query) {
+  //       formData.append("query", query);
+
+  //       setMessages((prevMessages) => [
+  //         ...prevMessages,
+  //         { type: "question", text: query, chatMode: "document" },
+  //       ]);
+
+  //       const response = await fetch(`${import.meta.env.VITE_API_URL}/query`, {
+  //         method: "POST",
+  //         body: formData,
+  //       });
+
+  //       if (!response.ok) {
+  //         throw new Error(`Error: ${response.statusText}`);
+  //       }
+
+  //       const responseData = await response.json();
+
+  //       if (responseData.response) {
+  //         const responseText = responseData.response;
+  //         let index = 0;
+
+  //         const responseMessage = { type: "response", text: "" };
+  //         setMessages((prevMessages) => [...prevMessages, responseMessage]);
+
+  //         const intervalId = setInterval(() => {
+  //           setMessages((prevMessages) => {
+  //             const updatedMessages = [...prevMessages];
+  //             updatedMessages[updatedMessages.length - 1] = {
+  //               ...updatedMessages[updatedMessages.length - 1],
+  //               text: responseText.slice(0, index),
+  //             };
+  //             return updatedMessages;
+  //           });
+  //           index++;
+
+  //           if (index > responseText.length) {
+  //             clearInterval(intervalId);
+  //           }
+  //         }, 5);
+  //       }
+  //     } else if (selectedChatMode === "dataset" && query && file) {
+  //       formData.append("query", query);
+  //       formData.append("file", file);
+
+  //       setMessages((prevMessages) => [
+  //         ...prevMessages,
+  //         {
+  //           type: "question",
+  //           text: query,
+  //           fileName: file.name,
+  //           chatMode: "dataset",
+  //         },
+  //       ]);
+
+  //       const response = await axios.post(
+  //         `${import.meta.env.VITE_API_URL}/dataset_query`,
+  //         formData,
+  //         { headers: { "Content-Type": "multipart/form-data" } }
+  //       );
+
+  //       const answer =
+  //         response.data.response || "No response provided by the server.";
+
+  //       let index = 0;
+  //       const responseMessage = { type: "answer", text: "" };
+  //       setMessages((prevMessages) => [...prevMessages, responseMessage]);
+
+  //       const intervalId = setInterval(() => {
+  //         setMessages((prevMessages) => {
+  //           const updatedMessages = [...prevMessages];
+  //           updatedMessages[updatedMessages.length - 1] = {
+  //             ...updatedMessages[updatedMessages.length - 1],
+  //             text: answer.slice(0, index).replace(/\*\*/g, ""),
+  //           };
+  //           return updatedMessages;
+  //         });
+  //         index++;
+
+  //         if (index > answer.length) {
+  //           clearInterval(intervalId);
+  //         }
+  //       }, 5);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error querying:", error);
+  //     alert("Error occurred while querying the dataset. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleQuery = async () => {
-    if (!query && !file) return;
+    if (!query) return;
+
+    if (selectedChatMode === "dataset" && !file) {
+      alert("No file uploaded. Please upload a file first.");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -118,8 +237,15 @@ function ChatBox() {
       formData.append("user_id", user_id);
       formData.append("model", selectedModel);
 
+      setQuery("");
+
       if (selectedChatMode === "document" && query) {
         formData.append("query", query);
+
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { type: "question", text: query, chatMode: "document" },
+        ]);
 
         const response = await fetch(`${import.meta.env.VITE_API_URL}/query`, {
           method: "POST",
@@ -133,21 +259,42 @@ function ChatBox() {
         const responseData = await response.json();
 
         if (responseData.response) {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              type: "question",
-              text: query,
-              fileName: file ? file.name : "",
-              chatMode: "document",
-            },
-            { type: "response", text: responseData.response },
-          ]);
-        }
+          const responseText = responseData.response;
+          let index = 0;
 
-        setQuery("");
-      } else if (selectedChatMode === "dataset" && query) {
+          const responseMessage = { type: "response", text: "" };
+          setMessages((prevMessages) => [...prevMessages, responseMessage]);
+
+          // Change the interval to 1ms for faster streaming
+          const intervalId = setInterval(() => {
+            setMessages((prevMessages) => {
+              const updatedMessages = [...prevMessages];
+              updatedMessages[updatedMessages.length - 1] = {
+                ...updatedMessages[updatedMessages.length - 1],
+                text: responseText.slice(0, index),
+              };
+              return updatedMessages;
+            });
+            index += 5; // Increment by 5 or any larger step to speed up the text reveal
+
+            if (index > responseText.length) {
+              clearInterval(intervalId);
+            }
+          }, 1); // Reduced to 1 ms for faster streaming
+        }
+      } else if (selectedChatMode === "dataset" && query && file) {
         formData.append("query", query);
+        formData.append("file", file);
+
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            type: "question",
+            text: query,
+            fileName: file.name,
+            chatMode: "dataset",
+          },
+        ]);
 
         const response = await axios.post(
           `${import.meta.env.VITE_API_URL}/dataset_query`,
@@ -158,35 +305,33 @@ function ChatBox() {
         const answer =
           response.data.response || "No response provided by the server.";
 
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            type: "question",
-            text: query,
-            fileName: file ? file.name : "",
-            chatMode: "dataset",
-          },
-        ]);
+        let index = 0;
+        const responseMessage = { type: "answer", text: "" };
+        setMessages((prevMessages) => [...prevMessages, responseMessage]);
 
-        setQuery("");
+        // Change the interval to 1ms for faster streaming
+        const intervalId = setInterval(() => {
+          setMessages((prevMessages) => {
+            const updatedMessages = [...prevMessages];
+            updatedMessages[updatedMessages.length - 1] = {
+              ...updatedMessages[updatedMessages.length - 1],
+              text: answer.slice(0, index).replace(/\*\*/g, ""),
+            };
+            return updatedMessages;
+          });
+          index += 5; // Increment by 5 or any larger step to speed up the text reveal
 
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { type: "answer", text: answer.replace(/\*\*/g, "") },
-        ]);
+          if (index > answer.length) {
+            clearInterval(intervalId);
+          }
+        }, 1); // Reduced to 1 ms for faster streaming
       }
     } catch (error) {
       console.error("Error querying:", error);
-      alert("No file uploaded. Please upload a file first.");
+      alert("Error occurred while querying the dataset. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCopy = (text) => {
-    navigator.clipboard.writeText(text);
-    setShowCopied(true);
-    setTimeout(() => setShowCopied(false), 2000);
   };
 
   return (
@@ -233,8 +378,11 @@ function ChatBox() {
             ) : (
               <MessageList
                 messages={messages}
-                handleCopy={handleCopy}
-                showCopied={showCopied}
+                handleCopy={(text) => {
+                  navigator.clipboard.writeText(text);
+                }}
+                copiedMessageId={copiedMessageId}
+                setCopiedMessageId={setCopiedMessageId}
                 fileName={fileName}
                 selectedChatMode={selectedChatMode}
               />
