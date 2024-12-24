@@ -119,7 +119,7 @@ const QueryInput = ({
           e.target.style.height = "auto";
           e.target.style.height = `${e.target.scrollHeight}px`;
         }}
-        onKeyDown={handleKeyDown} // Add this handler for Enter key press
+        onKeyDown={handleKeyDown}
       />
 
       <button
