@@ -124,7 +124,7 @@ const QueryInput = ({
 
       <button
         onClick={handleSpeechInput}
-        className="p-4 text-white hover:text-gray-400"
+        className="p-4 pr-2 text-white hover:text-gray-400"
         title={isListening ? "Stop Listening" : "Start Listening"}
       >
         {isListening ? (
@@ -137,7 +137,7 @@ const QueryInput = ({
       <button
         onClick={handleQuery}
         disabled={loading || (!query && !file)}
-        className="p-4 text-white hover:text-gray-400 disabled:opacity-50"
+        className="p-4 pl-2 text-white hover:text-gray-400 disabled:opacity-50"
       >
         {loading ? (
           <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin" />

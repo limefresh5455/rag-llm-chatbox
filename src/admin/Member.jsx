@@ -74,7 +74,7 @@ const Member = () => {
           <h1 className="text-3xl font-bold">Member</h1>
         </div>
         <div className="overflow-x-auto bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-semibold mb-4">Members</h2>
+          {/* <h2 className="text-2xl font-semibold mb-4">Members</h2> */}
           <table className="min-w-full table-auto">
             <thead>
               <tr className="bg-gray-200 text-left">

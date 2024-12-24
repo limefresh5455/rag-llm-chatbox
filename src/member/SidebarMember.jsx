@@ -24,13 +24,14 @@ const SidebarMember = () => {
 
   return (
     <div className="h-screen w-64 bg-[#171717] text-white flex flex-col">
-      <div className="p-4 text-lg border-b text-[#b4b4b4] border-[#212121] flex items-center">
-        <img src={Logo} alt="Logo" className="h-10 w-10 mr-4" />
-
-        <div>
+      <div className="p-4 text-lg border-b text-[#b4b4b4] border-[#212121] flex items-center w-full">
+        <img src={Logo} alt="Logo" className="h-10 w-10 mr-2 flex-shrink-0" />
+        <div className="overflow-hidden">
           Member Panel
-          <div className="text-sm text-[#b4b4b4] border-b border-[#212121]">
-            <p>{userData.email || "Not available"}</p>
+          <div className="text-xs text-[#b4b4b4] border-b border-[#212121] overflow-hidden">
+            <p className="break-words whitespace-normal overflow-hidden text-ellipsis">
+              {userData.email || "Not available"}
+            </p>
           </div>
         </div>
       </div>

@@ -3,6 +3,8 @@ import axios from "axios";
 import MessageList from "./MessageList";
 import ModelSelector from "./ModelSelector";
 import QueryInput from "./QueryInput";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ChatBox() {
   const [file, setFile] = useState(null);
@@ -97,14 +99,18 @@ function ChatBox() {
 
         const successMessage =
           response.data.message || "File uploaded successfully!";
-        alert(successMessage);
+        // alert(successMessage);
+        toast.success(successMessage);
 
         setFile(selectedFile);
 
         if (fileInputRef.current) fileInputRef.current.value = "";
       } catch (error) {
         console.error("Error uploading file:", error);
-        alert(
+        // alert(
+        //   "Error occurred while uploading the file. Please check the server or network connection."
+        // );
+        toast.error(
           "Error occurred while uploading the file. Please check the server or network connection."
         );
       } finally {
@@ -117,7 +123,8 @@ function ChatBox() {
     if (!query) return;
 
     if (selectedChatMode === "dataset" && !file) {
-      alert("No file uploaded. Please upload a file first.");
+      // alert("No file uploaded. Please upload a file first.");
+      toast.error("No file uploaded. Please upload a file first.");
       return;
     }
 
@@ -216,7 +223,10 @@ function ChatBox() {
       }
     } catch (error) {
       console.error("Error querying:", error);
-      alert("Error occurred while querying the dataset. Please try again.");
+      // alert("Error occurred while querying the dataset. Please try again.");
+      toast.error(
+        "Error occurred while querying the dataset. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -224,6 +234,7 @@ function ChatBox() {
 
   return (
     <div className="flex h-screen bg-[#212121] text-gray-100">
+      <ToastContainer />
       <main className="flex-1 flex flex-col p-8 pr-0 pt-2 pb-2">
         <div className="flex items-center mb-2 pr-8">
           <label htmlFor="chat-options" className="mr-2 text-lg text-[#b4b4b4]">

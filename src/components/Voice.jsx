@@ -40,6 +40,7 @@ const VoiceApp = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
       },
       body: JSON.stringify({ text: message }),
     })
@@ -90,7 +91,7 @@ const VoiceApp = () => {
 
   return (
     <div>
-      <h1>Voice Interaction App</h1>
+      {/* <h1>Voice Interaction App</h1> */}
 
       <p>{listening ? "Listening..." : 'Click "Start" to Speak'}</p>
 

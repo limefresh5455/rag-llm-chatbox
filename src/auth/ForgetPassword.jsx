@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 
 const ForgetPassword = () => {
@@ -9,11 +9,10 @@ const ForgetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Input validation
+
     if (!email || !newPassword) {
       setError("Email and New Password are required.");
       toast.error("Email and New Password are required.");
@@ -23,15 +22,17 @@ const ForgetPassword = () => {
       toast.error("Password must be at least 6 characters.");
       return;
     }
-    setError(""); // Clear error if inputs are valid
+    setError("");
     setLoading(true);
-    
+
     try {
-      // API call to reset the password
-      const response = await axios.put(`${import.meta.env.VITE_API_URL}/forgot_password`, {
-        email,
-        new_password: newPassword, // Send both email and new password
-      });
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/forgot_password`,
+        {
+          email,
+          new_password: newPassword,
+        }
+      );
       toast.success("Password reset successfully.");
       setEmail("");
       setNewPassword("");
@@ -46,18 +47,21 @@ const ForgetPassword = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96">
-        <h2 className="text-2xl font-semibold text-center mb-4">Forgot Password</h2>
-        
-        {/* Display error message if exists */}
+        <h2 className="text-2xl font-semibold text-center mb-4">
+          Forgot Password
+        </h2>
+
         {error && (
           <div className="text-red-500 text-sm mb-4">
             <p>{error}</p>
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -67,9 +71,11 @@ const ForgetPassword = () => {
               required
             />
           </div>
-          
+
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">New Password</label>
+            <label className="block text-sm font-medium text-gray-700">
+              New Password
+            </label>
             <input
               type="password"
               className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -79,7 +85,7 @@ const ForgetPassword = () => {
               required
             />
           </div>
-          
+
           <div className="flex items-center justify-between">
             <button
               type="submit"
@@ -91,7 +97,6 @@ const ForgetPassword = () => {
           </div>
         </form>
 
-        {/* Login link */}
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
             Remember your password?{" "}
