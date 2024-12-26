@@ -47,33 +47,72 @@ const Message = ({
     }
   };
 
-  const handleCopy = (id, elementId) => {
+  const handleCopy = (id, elementId, message) => {
+    if (!message || !message.text) {
+      console.error("Message or message.text is undefined.");
+      console.log("Received message:", message);
+      return;
+    }
+
     setCopiedMessageId(id);
 
-    const contentElement = document.getElementById(elementId);
+    try {
+      const markdownContent = message.text;
 
-    if (contentElement) {
+      let htmlContent = marked(markdownContent);
+
+      htmlContent = htmlContent.replace(
+        /<th>(.*?)<\/th>/g,
+        '<th style="font-weight: bold;">$1</th>'
+      );
+
+      const tempContainer = document.createElement("div");
+      tempContainer.innerHTML = htmlContent;
+      document.body.appendChild(tempContainer);
+
       const range = document.createRange();
-      range.selectNodeContents(contentElement);
-
+      range.selectNodeContents(tempContainer);
       const selection = window.getSelection();
       selection.removeAllRanges();
       selection.addRange(range);
 
-      navigator.clipboard
-        .writeText(contentElement.innerText)
-        .then(() => {
-          setTimeout(() => {
-            setCopiedMessageId(null);
-          }, 2000);
+      const successful = document.execCommand("copy");
+      if (successful) {
+        console.log("Copied as HTML to clipboard");
+      } else {
+        console.warn("Copy as HTML failed. Falling back to plain text.");
+        copyAsPlainText(markdownContent);
+      }
 
-          selection.removeAllRanges();
-        })
-        .catch((err) => {
-          console.error("Error copying rendered content:", err);
-        });
-    } else {
-      console.error("Content element not found!");
+      selection.removeAllRanges();
+      document.body.removeChild(tempContainer);
+    } catch (err) {
+      console.error("Error during copy:", err);
+      copyAsPlainText(message.text);
+    }
+
+    setTimeout(() => {
+      setCopiedMessageId(null);
+    }, 2000);
+  };
+
+  const copyAsPlainText = (content) => {
+    const textarea = document.createElement("textarea");
+    textarea.value = content;
+    document.body.appendChild(textarea);
+
+    textarea.select();
+    try {
+      const successful = document.execCommand("copy");
+      if (successful) {
+        console.log("Copied as plain text to clipboard");
+      } else {
+        console.error("Failed to copy as plain text.");
+      }
+    } catch (err) {
+      console.error("Error copying as plain text:", err);
+    } finally {
+      document.body.removeChild(textarea);
     }
   };
 
@@ -139,7 +178,12 @@ const Message = ({
             <div className="flex items-center" key={message.id}>
               <button
                 onClick={() =>
-                  handleCopy(message.id, `rendered-message-${message.id}`)
+                  handleCopy(
+                    message.id,
+                    `rendered-message-${message.id}`,
+                    message,
+                    "elementId"
+                  )
                 }
                 className="flex items-center justify-center px-2 py-1 text-sm font-medium text-gray-300 bg-gray-700 rounded-md hover:text-white hover:bg-gray-800"
                 title="Copy to clipboard"

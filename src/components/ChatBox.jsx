@@ -82,7 +82,7 @@ function ChatBox() {
   const handleFileChange = async (event) => {
     const selectedFile = event.target.files[0];
     setFile(null);
-    console.log("Uploaded file:", selectedFile);
+    // console.log("Uploaded file:", selectedFile);
 
     if (selectedFile) {
       try {
@@ -148,7 +148,7 @@ function ChatBox() {
           method: "POST",
           body: formData,
         });
-
+        // console.log("response", response);
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
@@ -197,7 +197,7 @@ function ChatBox() {
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-
+        // console.log("response1", response);
         const answer =
           response.data.response || "No response provided by the server.";
 
